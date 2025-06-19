@@ -1,0 +1,450 @@
+---
+description: 
+globs: *.md
+alwaysApply: false
+---
+# Présentations Marp - Guide Complet
+
+**OBJECTIF** : Maîtriser la création de présentations professionnelles avec Marp CLI et le framework Marpit.
+
+## Setup et Installation
+
+### Marp CLI (installé globalement via npm)
+```bash
+npm install -g @marp-team/marp-cli
+```
+
+### Framework utilisé
+- **Marpit** : Framework de base pour les slides en Markdown
+- **Marp Core** : Extension avec thèmes et fonctionnalités avancées
+
+## Commandes essentielles Marp CLI
+
+### Conversions de base
+```bash
+# Conversion HTML (par défaut)
+marp presentation.md
+marp presentation.md -o output.html
+
+# Conversion PDF (nécessite Chrome/Edge/Firefox)
+marp --pdf presentation.md
+marp presentation.md -o output.pdf
+
+# Conversion PowerPoint
+marp --pptx presentation.md
+marp presentation.md -o output.pptx
+
+# Conversion en images
+marp --images png presentation.md  # Toutes les slides
+marp --image png presentation.md   # Première slide seulement
+```
+
+### Modes de travail
+```bash
+# Mode watch (auto-refresh)
+marp -w presentation.md
+
+# Mode serveur (preview en direct)
+marp -s ./slides
+
+# Mode preview (fenêtre immersive)
+marp -p presentation.md
+
+# Combinés
+marp -w -p presentation.md
+```
+
+### Options importantes
+```bash
+# Choix du thème
+marp --theme gaia presentation.md
+marp --theme custom-theme.css presentation.md
+
+# Échelle pour images haute résolution
+marp --image-scale 2 presentation.md -o slide@2x.png
+
+# Fichiers locaux (sécurité)
+marp --pdf --allow-local-files presentation.md
+
+# Configuration de navigateur
+marp --browser firefox presentation.md
+marp --browser-path /path/to/browser presentation.md
+```
+
+## Structure de base d'une présentation Marpit
+
+### Template minimal
+```markdown
+---
+theme: default
+paginate: true
+---
+
+# Titre de la présentation
+## Sous-titre
+
+Votre nom
+Date
+
+---
+
+## Slide 2
+
+Contenu de la slide...
+
+---
+
+<!-- _class: lead -->
+# Slide avec classe spéciale
+
+---
+
+<!-- _backgroundColor: black -->
+<!-- _color: white -->
+# Slide avec style personnalisé
+```
+
+## Directives Marpit essentielles
+
+### Directives globales (pour toute la présentation)
+```markdown
+---
+theme: gaia                    # Choix du thème
+style: |                       # CSS personnalisé global
+  section {
+    background-color: #f0f0f0;
+  }
+headingDivider: 2             # Division auto aux titres H2+
+lang: fr                      # Langue de la présentation
+---
+```
+
+### Directives locales (par slide)
+```markdown
+<!-- paginate: true -->        # Numérotation des pages
+<!-- header: "Titre présentation" -->
+<!-- footer: "© 2024 Mon nom" -->
+<!-- class: lead -->           # Classe CSS personnalisée
+<!-- backgroundColor: #123456 -->
+<!-- color: white -->
+<!-- backgroundImage: url('image.jpg') -->
+```
+
+### Directives spot (une seule slide)
+```markdown
+<!-- _paginate: false -->      # Désactive pagination sur cette slide
+<!-- _class: lead -->          # Classe uniquement sur cette slide
+<!-- _backgroundColor: red --> # Fond rouge sur cette slide seulement
+```
+
+## Gestion des images et backgrounds
+
+### Images inline avec redimensionnement
+```markdown
+![w:200px h:150px](mdc:image.jpg)         # Taille fixe
+![w:50%](mdc:image.jpg)                   # Taille relative (backgrounds uniquement)
+![width:300px height:200px](mdc:image.jpg) # Syntaxe complète
+```
+
+### Backgrounds de slide
+```markdown
+![bg](mdc:background.jpg)                 # Background par défaut (cover)
+![bg contain](mdc:background.jpg)         # Background ajusté
+![bg fit](mdc:background.jpg)             # Alias pour contain
+![bg auto](mdc:background.jpg)            # Taille originale
+![bg 80%](mdc:background.jpg)             # Taille personnalisée
+```
+
+### Filtres CSS sur images
+```markdown
+![blur:5px](mdc:image.jpg)
+![brightness:1.5 contrast:120%](mdc:image.jpg)
+![grayscale:1 sepia:50%](mdc:image.jpg)
+![drop-shadow:0,5px,10px,rgba(0,0,0,.4)](mdc:image.jpg)
+```
+
+### Backgrounds avancés (nécessite inlineSVG: true)
+```markdown
+# Backgrounds multiples
+![bg](mdc:image1.jpg)
+![bg](mdc:image2.jpg)
+![bg](mdc:image3.jpg)
+
+# Direction verticale
+![bg vertical](mdc:image1.jpg)
+![bg](mdc:image2.jpg)
+
+# Split backgrounds
+![bg left](mdc:image.jpg)         # Image à gauche, contenu à droite
+![bg right:30%](mdc:image.jpg)    # Image à droite (30% de largeur)
+```
+
+## Pagination et navigation
+
+### Configuration pagination
+```markdown
+<!-- paginate: true -->   # Affiche et incrémente
+<!-- paginate: false -->  # Cache mais incrémente
+<!-- paginate: hold -->   # Affiche mais n'incrémente pas
+<!-- paginate: skip -->   # Cache et n'incrémente pas
+```
+
+### Personnalisation page numbers (CSS)
+```css
+section::after {
+  content: 'Page ' attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+  font-weight: bold;
+}
+```
+
+## Styles et thèmes
+
+### Thèmes intégrés Marp Core
+- `default` : Thème de base
+- `gaia` : Thème moderne et élégant
+- `uncover` : Thème minimaliste
+
+### CSS personnalisé inline
+```markdown
+<style>
+section {
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: white;
+}
+
+h1 {
+  color: #ffeb3b;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+</style>
+```
+
+### CSS scoped (une slide seulement)
+```markdown
+<style scoped>
+h1 {
+  color: red;
+  font-size: 3em;
+}
+</style>
+```
+
+## Configuration avancée
+
+### Fichier `marp.config.js`
+```javascript
+export default {
+  // Moteur de conversion
+  engine: '@marp-team/marp-core',
+  
+  // Template HTML
+  template: 'bespoke', // ou 'bare'
+  
+  // Options du moteur
+  options: {
+    markdown: {
+      breaks: true,
+      html: true
+    },
+    minifyCSS: false
+  },
+  
+  // Thèmes personnalisés
+  themeSet: [
+    './themes/custom-theme.css'
+  ],
+  
+  // PDF options
+  pdf: true,
+  pdfOutlines: {
+    pages: true,
+    headings: true
+  }
+}
+```
+
+### Métadonnées de présentation
+```markdown
+---
+title: "Ma présentation"
+description: "Description de la présentation"
+author: "Votre nom"
+keywords: "mots,clés,séparés,virgules"
+url: "https://example.com/presentation"
+image: "https://example.com/og-image.jpg"
+---
+```
+
+## Template Bespoke (par défaut)
+
+### Fonctionnalités intégrées
+- **Navigation** : Clavier et gestes tactiles
+- **Plein écran** : Touche `f` ou `F11`
+- **Contrôleur** : Interface tactile (désactivable avec `--bespoke.osc=false`)
+- **Vue présentateur** : Touche `p` (ouvre fenêtre externe)
+- **Barre de progression** : `--bespoke.progress`
+- **Transitions** : Support des transitions de slides
+- **Listes fragmentées** : Apparition progressive avec `*` et `1)`
+
+### Options Bespoke
+```bash
+marp --bespoke.progress slide.md        # Barre de progression
+marp --bespoke.osc=false slide.md       # Désactive contrôleur tactile
+```
+
+## Notes de présentation
+
+### Syntaxe des notes
+```markdown
+# Ma slide
+
+<!-- Ceci est une note de présentation -->
+<!-- Elle n'apparaîtra pas sur la slide -->
+<!-- Mais sera disponible dans le mode présentateur -->
+
+Contenu visible de la slide...
+
+---
+
+## Slide suivante
+
+<!--
+Note multiligne :
+- Point important 1
+- Point important 2  
+- Remarque personnelle
+-->
+```
+
+### Export des notes
+```bash
+marp --notes presentation.md          # Export en .txt
+marp presentation.md -o notes.txt     # Export personnalisé
+```
+
+## Cas d'usage courants
+
+### Slide de titre
+```markdown
+<!-- _class: lead -->
+<!-- _paginate: false -->
+
+# Titre Principal
+## Sous-titre élégant
+
+**Présentateur** • Date • Lieu
+```
+
+### Slide avec code
+```markdown
+## Code avec coloration syntaxique
+
+```javascript
+const marpit = new Marpit({
+  markdown: { html: true },
+  inlineSVG: true
+})
+
+const { html, css } = marpit.render(markdown)
+```
+```
+
+### Slide avec colonnes (nécessite CSS)
+```markdown
+<style scoped>
+.columns {
+  display: flex;
+  gap: 2rem;
+}
+.column {
+  flex: 1;
+}
+</style>
+
+## Contenu en colonnes
+
+<div class="columns">
+<div class="column">
+
+### Colonne gauche
+- Point 1
+- Point 2
+
+</div>
+<div class="column">
+
+### Colonne droite
+- Point A
+- Point B
+
+</div>
+</div>
+```
+
+### Slide plein écran avec background
+```markdown
+<!-- _class: lead -->
+<!-- _paginate: false -->
+![bg opacity:.3](mdc:background-image.jpg)
+
+# Message Important
+## Sur fond d'image
+```
+
+## Débogage et dépannage
+
+### Problèmes courants
+1. **PDF vide** : Vérifier qu'un navigateur (Chrome/Edge/Firefox) est installé
+2. **Images non chargées** : Utiliser `--allow-local-files` pour fichiers locaux
+3. **CSS non appliqué** : Vérifier la syntaxe des directives YAML
+4. **Thème introuvable** : S'assurer que le thème est dans le themeSet
+
+### Mode debug
+```bash
+marp --help                    # Aide complète
+marp --version                # Version de Marp CLI
+marp --debug presentation.md  # Mode verbose (si disponible)
+```
+
+## ❌ ERREURS À ÉVITER
+
+```markdown
+<!-- ❌ INCORRECT : Directive mal formatée -->
+<!-- theme : gaia -->           # Espace après les deux-points
+paginate: true                 # Pas dans un commentaire HTML
+
+<!-- ❌ INCORRECT : Séparateur de slide -->
+***                           # Utiliser --- et non ***
+
+<!-- ❌ INCORRECT : CSS global dans scoped -->
+<style scoped>
+html { font-size: 18px; }     # Le scoped ne s'applique qu'à la section
+</style>
+
+<!-- ❌ INCORRECT : Metadata après contenu -->
+# Premier slide
+
+---
+theme: gaia                   # Les métadonnées doivent être au début
+---
+```
+
+## ✅ BONNES PRATIQUES
+
+1. **Structure** : Toujours commencer par les métadonnées YAML front-matter
+2. **Séparation** : Utiliser `---` pour séparer les slides
+3. **Images** : Optimiser la taille des images pour le web
+4. **Accessibilité** : Utiliser des contrastes suffisants
+5. **Test** : Tester dans différents formats (HTML, PDF, PPTX)
+6. **Backup** : Versionner les présentations importantes
+
+## Documentation officielle
+
+Pour des fonctionnalités avancées ou des problèmes spécifiques :
+
+- **Marp CLI** : https://github.com/marp-team/marp-cli
+- **Marpit Framework** : https://marpit.marp.app/
+- **API Marpit** : https://marpit-api.marp.app/
+- **Marp Core** : https://github.com/marp-team/marp-core
+
+**En cas de problème inattendu, toujours consulter la documentation officielle en priorité.**

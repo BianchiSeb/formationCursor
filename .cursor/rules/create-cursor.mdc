@@ -1,0 +1,240 @@
+---
+description: créer une nouvelle régle cursor
+globs: 
+alwaysApply: false
+---
+
+# Création d'une Règles Cursor -création d'une rule cursor
+
+**OBJECTIF** : Standardiser la création et l'organisation des règles Cursor pour maintenir la cohérence et l'efficacité de l'IA dans le projet, en utilisant les paramètres frontmatter appropriés.
+
+## Frontmatter obligatoire (YAML)
+
+**CRUCIAL** : Chaque fichier `.mdc` DOIT commencer par un frontmatter YAML qui définit le comportement de la règle :
+
+```yaml
+---
+description: "Description courte et précise de la règle"
+globs: ["**/*.ts", "**/domain/**/*.js"]  # Patterns de fichiers (optionnel)
+alwaysApply: false  # true = toujours appliqué, false = conditionnel
+---
+```
+
+### Paramètres frontmatter
+
+| Paramètre | Type | Obligatoire | Description |
+|-----------|------|-------------|-------------|
+| `description` | string | **OUI** pour Agent Requested | Description courte pour que l'AI comprenne quand utiliser la règle |
+| `globs` | array | Non | Patterns de fichiers pour auto-attachement (ex: `["**/calendar/**/*.ts"]`) |
+| `alwaysApply` | boolean | Non | `true` = toujours inclus, `false` = conditionnel (défaut) |
+
+## Types de règles selon frontmatter
+
+### 1. Always Apply (`alwaysApply: true`)
+```yaml
+---
+description: "Standards généraux du projet"
+globs: []
+alwaysApply: true
+---
+```
+- **Usage** : Standards généraux, conventions de code universelles
+- **Exemples** : coding-standards, interface-pattern
+- **Inconvénient** : Consomme toujours du contexte
+
+### 2. Auto Attached (`globs` définis)
+```yaml
+---
+description: "Conventions spécifiques au domaine variables-view"
+globs: ["**/variables-view/**/*.ts", "**/variables-view/**/*.html"]
+alwaysApply: true
+---
+```
+- **Usage** : Règles spécifiques à un domaine/dossier
+- **Exemples** : calendar-domain, api-routes, firebase-functions
+- **Avantage** : Activé automatiquement quand files correspondants sont ouverts
+
+### 3. Agent Requested (avec `description`)
+```yaml
+---
+description: "Guide pour créer des Firebase Functions"
+globs: []
+alwaysApply: false
+---
+```
+- **Usage** : L'AI décide d'inclure la règle selon le contexte
+- **Exemples** : firebase-functions, create-cursor-rules
+- **Avantage** : Intelligent, activé selon besoin
+
+## Processus AI - Questions à poser à l'utilisateur
+
+Quand l'AI crée une règle, elle DOIT demander :
+
+### Question 1 : Type de règle
+**"Quel type de règle voulez-vous créer ?"**
+
+- **Always Apply** : Standards généraux appliqués partout
+- **Auto Attached** : Règles spécifiques à certains dossiers/fichiers
+- **Agent Requested** : L'AI décide quand l'utiliser
+
+### Question 2 : Description (si Agent Requested)
+**"Donnez une description courte pour que l'AI sache quand utiliser cette règle :"**
+- Exemple : "Guide pour créer des Firebase Functions"
+- Exemple : "Conventions spécifiques au domaine variables-view"
+
+### Question 3 : Patterns de fichiers (si Auto Attached)
+**"Quels patterns de fichiers doivent déclencher cette règle ?"**
+- Exemple : `["**/variables-view/**/*.ts"]` pour domaine calendar
+- Exemple : `["**/*.test.ts", "**/*.spec.ts"]` pour tests
+- Exemple : `["**/api/**/*.ts"]` pour API routes
+
+### Question 4 : Scope général
+**"Cette règle concerne quel scope ?"**
+- Domaine métier spécifique (calendar, users, etc.)
+- Type de fichiers (tests, interfaces, etc.)
+- Standards généraux du projet
+
+## Templates par type de règle
+
+### Template Always Apply
+```yaml
+---
+description: "Standards généraux du projet DRKTR"
+globs: []
+alwaysApply: true
+---
+
+# Standards Généraux - DRKTR
+
+**OBJECTIF** : [Objectif précis]
+
+## [Instructions détaillées]
+
+## ❌ PATTERNS INTERDITS
+
+## Étapes de vérification obligatoires
+```
+
+### Template Auto Attached
+```yaml
+---
+description: "Conventions spécifiques au domaine [DOMAIN]"
+globs: ["**/[DOMAIN]/**/*.ts", "**/[DOMAIN]/**/*.js"]
+alwaysApply: false
+---
+
+# Domaine [DOMAIN] - DRKTR
+
+**OBJECTIF** : [Objectif métier spécifique]
+
+## [Instructions spécialisées]
+```
+
+### Template Agent Requested
+```yaml
+---
+description: "Guide pour [ACTION_SPECIFIQUE]"
+globs: []
+alwaysApply: false
+---
+
+# [ACTION] - Guide AI pour DRKTR
+
+**OBJECTIF** : [Objectif précis de l'action]
+
+## Processus AI - [Action] automatique
+
+### Étape 1 : [Première étape]
+[Instructions exécutables]
+
+## Workflow AI complet
+[Processus step-by-step]
+```
+
+
+## Exemples de patterns globs courants
+
+```yaml
+# Domaine métier
+globs: ["**/calendar/**/*.ts", "**/calendar/**/*.js"]
+
+# Type de fichiers  
+globs: ["**/*.interface.ts", "**/*.model.ts"]
+
+# Technologies spécifiques
+globs: ["**/*.test.ts", "**/*.spec.ts"]
+globs: ["**/firebase/**/*.ts"]
+globs: ["**/api/**/*.ts", "**/routes/**/*.ts"]
+
+# Structure de dossiers
+globs: ["**/backend/**/*.ts"]
+globs: ["**/frontend/**/*.ts", "**/frontend/**/*.js"]
+```
+
+## ❌ PATTERNS INTERDITS
+
+```yaml
+# ❌ MAUVAIS : Pas de frontmatter
+# Titre de la Règle
+Contenu sans frontmatter...
+
+# ❌ MAUVAIS : Frontmatter incorrect
+---
+title: Ma règle      # ❌ Utiliser 'description'
+active: true         # ❌ Utiliser 'alwaysApply'
+files: ["*.ts"]      # ❌ Utiliser 'globs'
+---
+
+# ❌ MAUVAIS : Description vague pour Agent Requested
+---
+description: "Règle utile"  # ❌ Trop vague
+alwaysApply: false
+---
+
+# ❌ MAUVAIS : Trop de règles Always Apply
+---
+alwaysApply: true  # ❌ Consomme trop de contexte
+---
+```
+
+## Erreurs courantes et solutions
+
+### Erreur : Règle jamais appliquée
+**Cause** : Frontmatter manquant ou incorrect
+**Solution** : Ajouter frontmatter YAML valide selon le type de règle
+
+### Erreur : Règle appliquée tout le temps
+**Cause** : `alwaysApply: true` sur trop de règles
+**Solution** : Utiliser Auto Attached ou Agent Requested
+
+### Erreur : Auto Attached ne fonctionne pas
+**Cause** : Patterns `globs` incorrects
+**Solution** : Vérifier que patterns correspondent aux chemins de fichiers réels
+
+### Erreur : AI n'utilise pas la règle Agent Requested
+**Cause** : Description pas assez claire
+**Solution** : Description spécifique et actionnable
+
+## Migration des règles existantes
+
+**URGENT** : Toutes nos règles actuelles manquent le frontmatter ! Elles sont traitées comme Manual.
+
+
+## Étapes de vérification obligatoires
+
+Avant de créer une nouvelle règle, vérifier que :
+
+1. ✅ **Frontmatter présent** : YAML valide en haut du fichier
+2. ✅ **Type de règle clair** : Always/Auto/Agent/Manual défini
+3. ✅ **Description appropriée** : Obligatoire pour Agent Requested
+4. ✅ **Globs corrects** : Patterns testés pour Auto Attached
+5. ✅ **Pas trop d'Always Apply** : Maximum 2-3 règles alwaysApply
+6. ✅ **Emplacement .cursor/rules/** : Fichier dans bon dossier
+7. ✅ **Extension .mdc** : Format MDC respecté
+8. ✅ **Nommage kebab-case** : Convention respectée
+9. ✅ **Scope approprié** : Règle ni trop générale ni trop spécifique
+10. ✅ **Pas de duplication** : Règle unique et non-redondante
+
+**CONSÉQUENCE** : Si ces vérifications échouent, Cursor ne pourra pas appliquer la règle au bon moment, rendant l'AI moins efficace.
+
+**RAPPEL** : Le frontmatter YAML est OBLIGATOIRE pour que Cursor comprenne quand et comment appliquer chaque règle. Sans frontmatter, toutes les règles sont traitées comme "Manual".

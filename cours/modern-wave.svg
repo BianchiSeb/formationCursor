@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 400" fill="none">
+  <defs>
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e6f3ff;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#cce7ff;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#b3daff;stop-opacity:0.3"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Vague principale -->
+  <path d="M0,300 C300,280 600,320 960,300 C1200,285 1500,305 1920,290 L1920,400 L0,400 Z" 
+        fill="url(#waveGradient)"/>
+  
+  <!-- Vague secondaire -->
+  <path d="M0,350 C400,335 800,365 1200,350 C1400,340 1600,355 1920,345 L1920,400 L0,400 Z" 
+        fill="url(#waveGradient)" opacity="0.5"/>
+        
+  <!-- Points de connexion subtils -->
+  <circle cx="200" cy="310" r="2" fill="#2563eb" opacity="0.4"/>
+  <circle cx="800" cy="295" r="2" fill="#2563eb" opacity="0.4"/>
+  <circle cx="1400" cy="305" r="2" fill="#2563eb" opacity="0.4"/>
+  
+  <!-- Lignes de connexion -->
+  <line x1="200" y1="310" x2="800" y2="295" stroke="#2563eb" stroke-width="1" opacity="0.2"/>
+  <line x1="800" y1="295" x2="1400" y2="305" stroke="#2563eb" stroke-width="1" opacity="0.2"/>
+</svg> 
